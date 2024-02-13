@@ -7,12 +7,17 @@ if (!gl) {
 
 let vertexShaderSource = `#version 300 es
 // An attribute is an input to a vertex shader. It will receive data from a buffer.
-in vec4 a_position;
+in vec2 a_position;
+uniform vec2 u_resolution;
 
 void main() {
 	// gl_Position is a special variable a vertex shader is responsible for setting.
 	// This just sets gl_Position to whatever a_position is.
-	gl_Position = a_position;
+	
+	// Transform into clipspace
+	vec2 zeroToOne = a_position / u_resolution;
+
+	gl_Position = vec4(a_position / u_resolution, 0, 1);
 }
 `;
 
@@ -64,18 +69,23 @@ let program = createProgram(gl, vertexShader, fragmentShader);
 // to this program
 // Look for a_position attribute in the program we just created
 let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+let resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
 
 // Attributes get data from a buffer so we need to create that too.
 let positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 // Put the data into the buffer by referencing the bind point
-let a = 1;
+let a = 400;
 let positions = [
 	0, a*Math.cos(Math.PI/6)/2,
 	-a/2, -a*Math.cos(Math.PI/6)/2,
 	a/2, -a*Math.cos(Math.PI/6)/2,
 ]
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+// Set uniform
+gl.useProgram(program); // Set the current program
+gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 // Now the data is in the buffer but we need to tell the attribute how to get the required
 // data out of it
