@@ -53,19 +53,29 @@ let p1 = [0, 0];
 let p2 = [0, 100];
 
 let clickCounter = 0;
-canvas.addEventListener('click', (e) => {
+let isMouseDown = false;
+canvas.addEventListener('mousedown', (e) => {
+	isMouseDown = true;
 	const rect = canvas.getBoundingClientRect();
 	const x = e.clientX - rect.left - rect.width/2;
 	const y = rect.bottom - e.clientY - rect.height/2;
-	console.log(x, y);
-	if (clickCounter % 2 == 1) {
-		p1 = [x, y];
-		draw();
-	} else {
+	p1 = [x, y];
+});
+
+canvas.addEventListener('mousemove', (e) => {
+	if (isMouseDown) {
+		const rect = canvas.getBoundingClientRect();
+		const x = e.clientX - rect.left - rect.width/2;
+		const y = rect.bottom - e.clientY - rect.height/2;
 		p2 = [x, y];
 		draw();
 	}
-	clickCounter++;
+});
+
+canvas.addEventListener('mouseup', (e) => {
+	if (isMouseDown) {
+		isMouseDown = false;
+	}
 });
 
 const arrowShaftWidth = 4;
