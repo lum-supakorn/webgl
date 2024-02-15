@@ -14,7 +14,7 @@ const vertexShaderSource = `#version 300 es
 			a_position.x * u_rotation.y + a_position.y * u_rotation.x,
 			a_position.y * u_rotation.y - a_position.x * u_rotation.x);
 		vec2 position = rotatedPosition + u_translation;
-		gl_Position = vec4(position/u_resolution, 0.0, 1.0);
+		gl_Position = vec4(2.0 * position/u_resolution, 0.0, 1.0);
 	}
 `;
 
@@ -50,29 +50,29 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 }
 
 let p1 = [0, 0];
-let p2 = [0, 0];
-const x1Slider = document.getElementById("x1");
-const x1Value = document.getElementById("x1-value");
-const x2Slider = document.getElementById("x2");
-const x2Value = document.getElementById("x2-value");
-const y1Slider = document.getElementById("y1");
-const y1Value = document.getElementById("y1-value");
-const y2Slider = document.getElementById("y2");
-const y2Value = document.getElementById("y2-value");
-p1[0] = parseInt(x1Slider.value);
-p1[1] = parseInt(y1Slider.value);
-p2[0] = parseInt(x2Slider.value);
-p2[1] = parseInt(y2Slider.value);
-x1Value.innerHTML = p1[0];
-y1Value.innerHTML = p1[1];
-x2Value.innerHTML = p2[0];
-y2Value.innerHTML = p2[1];
+let p2 = [0, 100];
 
-const arrowShaftWidth = 10;
+let clickCounter = 0;
+canvas.addEventListener('click', (e) => {
+	const rect = canvas.getBoundingClientRect();
+	const x = e.clientX - rect.left - rect.width/2;
+	const y = rect.bottom - e.clientY - rect.height/2;
+	console.log(x, y);
+	if (clickCounter % 2 == 1) {
+		p1 = [x, y];
+		draw();
+	} else {
+		p2 = [x, y];
+		draw();
+	}
+	clickCounter++;
+});
+
+const arrowShaftWidth = 4;
 const arrowShaftOffset = 0;
 const arrowShaftLength = 1;
 const vertexCount = 12;
-const arrowHeadWidth = 30;
+const arrowHeadWidth = 15;
 const arrowHeadRecess = 5;
 
 let rotation = [0, 0];
@@ -103,27 +103,6 @@ function updateVertices(p1, p2) {
 	return vertices;
 }
 
-x1Slider.oninput = function() {
-	p1[0] = parseInt(this.value);
-	x1Value.innerHTML = this.value;
-	draw();
-}
-y1Slider.oninput = function() {
-	p1[1] = parseInt(this.value);
-	y1Value.innerHTML = this.value;
-	draw();
-}
-x2Slider.oninput = function() {
-	p2[0] = parseInt(this.value);
-	x2Value.innerHTML = this.value;
-	draw();
-}
-y2Slider.oninput = function() {
-	p2[1] = parseInt(this.value);
-	y2Value.innerHTML = this.value;
-	draw();
-}
-
 const vertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
@@ -140,6 +119,7 @@ gl.useProgram(program);
 gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 function draw() {
+	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
