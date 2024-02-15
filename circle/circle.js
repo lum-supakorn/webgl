@@ -54,10 +54,12 @@ vertexCountValue.innerHTML = vertexCount;
 rSlider.oninput = function() {
 	r = parseInt(this.value);
 	rValue.innerHTML = r;
+	render();
 }
 vertexCountSlider.oninput = function() {
 	vertexCount = parseInt(this.value);
 	vertexCountValue.innerHTML = vertexCount;
+	render();
 }
 function createVertices(r, vertexCount) {
 	const vertices = [];
@@ -94,8 +96,6 @@ function render() {
 	gl.useProgram(program);
 	gl.bindVertexArray(vao);
 	gl.drawArrays(gl.LINE_STRIP, 0, vertexCount+1);
-
-	requestAnimationFrame(render);
 }
 
 render();
