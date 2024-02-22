@@ -1,8 +1,8 @@
-<!-- eigshow -- self-explanatory -->
+<!-- gs -- animate Gauss-Seidel search paths -->
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>eigshow</title>
+		<title>gs</title>
 		<style>
 			#content {
 				width: 740px;
@@ -11,13 +11,17 @@
 			canvas {
 				display: block;
 				border: solid 1px #DDD;
+				width: 740px;
+				height: 500px;
 			}
 		</style>
 	</head>
 	<body>
 		<div id="content">
 			<canvas id="c" width=740 height=500></canvas>
+			iter: <input type="range" min="0" max="10" value="0" step="1" id="iter">
+			<span id="iter-value"></span><br>
 		</div>
-		<script src="eigshow.js"></script>
+		<script src="gs.js"></script>
 	</body>
 </html>
